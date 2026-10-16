@@ -129,4 +129,4 @@ Tested agent-framework changes and failure modes like these are written up weekl
 
 ## License
 
-TODO: not chosen yet.
+MIT. See [LICENSE](LICENSE).
