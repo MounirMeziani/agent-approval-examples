@@ -127,6 +127,8 @@ cd openai-agents/examples && python idempotent_approval.py
 
 Tested agent-framework changes and failure modes like these are written up weekly at [Agent Signal](https://tryagentsignal.com).
 
+If you want an alert when a framework release breaks an approval flow, that's [Agent Signal Pro](https://tryagentsignal.com/pro).
+
 ## License
 
 MIT. See [LICENSE](LICENSE).
