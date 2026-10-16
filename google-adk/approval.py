@@ -19,7 +19,7 @@ from google.adk.sessions.sqlite_session_service import SqliteSessionService
 from google.adk.tools import FunctionTool, ToolContext
 from google.adk.tools.tool_confirmation import ToolConfirmation
 from google.genai import types
-from google.adk.errors._stale_session_error import StaleSessionError
+from google.adk.errors._stale_session_error import StaleSessionError  # see README: why the idempotency key is required
 import ledger
 
 APP, USER = "billing", "u"

@@ -17,19 +17,19 @@ All examples use the same scenario: an agent wants to charge order 42 for `1999`
 
 ### `google-adk/`: Google ADK 2.12.0
 - `approval.py`: `FunctionTool(charge, require_confirmation=True)` makes ADK emit `adk_request_confirmation`. The session is stored with `SqliteSessionService`, so a fresh process finds the pending confirmation and answers it with a `ToolConfirmation` function response. The idempotency key is `<session_id>:<function_call_id>`. Model: `ScriptedLlm` (a `BaseLlm` subclass, offline).
-- Multi-worker note: when two workers answer the same confirmation, ADK's optimistic session check raises `StaleSessionError` in the slower one, but only *after* its tool may already have run. Without the idempotency key that is a double charge.
+- Why the idempotency key is required: when two workers answer the same confirmation at once, ADK raises `StaleSessionError` on the slower worker, but only *after* its tool may already have run. ADK's session check rejects the duplicate event; it does not stop the side effect. In a manual run without the key, both workers charged (2 ledger rows). With the key, the second charge is a no-op, so `test_multiple_workers_one_side_effect` always sees exactly one.
 
 ### `vercel-ai-sdk/`: Vercel AI SDK `ai@7.0.142`
 - `approval.mjs`: approval is configured with `toolApproval` on `generateText` (the tool-level `needsApproval` is deprecated in v7). The run returns a `tool-approval-request`; the messages are saved as JSON, and any process appends a `tool-approval-response` and calls `generateText` again. The idempotency key is `order-42:<toolCallId>`. Model: `MockLanguageModelV4` from `ai/test`.
 
 ## Pinned versions
 
-From each folder's `requirements.txt` (full pins are in those files):
+Each folder's `requirements.txt` pins only the packages its example and tests import directly; pip resolves the rest:
 
 | Folder | Framework | Other key pins |
 |---|---|---|
 | `openai-agents/` | `openai-agents==0.24.0` | `openai==3.31.0`, `pydantic==2.14.1`, `pytest==9.1.1` |
-| `langgraph/` | `langgraph==1.2.15` | `langgraph-checkpoint==4.3.0`, `langgraph-checkpoint-sqlite==3.1.2`, `langchain-core==1.6.11`, `pytest==9.1.1` |
+| `langgraph/` | `langgraph==1.2.15` | `langgraph-checkpoint==4.3.0`, `langgraph-checkpoint-sqlite==3.1.2`, `pytest==9.1.1` |
 | `google-adk/` | `google-adk==2.12.0` | `google-genai==2.31.0`, `aiosqlite==0.22.1`, `pytest==9.1.1` |
 | `vercel-ai-sdk/` | `ai@7.0.142` | `zod@4.6.7`, full tree in `package-lock.json` |
 
@@ -78,7 +78,7 @@ deactivate
 cd vercel-ai-sdk && npm ci && npm test && cd ..
 ```
 
-Each folder pins a different `fastapi`/`websockets`/`opentelemetry-api`, so use one virtualenv per folder.
+The frameworks pull in different transitive versions, so use one virtualenv per folder.
 
 To try the approval flow by hand (OpenAI Agents SDK):
 
