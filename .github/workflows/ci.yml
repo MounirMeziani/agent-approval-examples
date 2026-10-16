@@ -1,0 +1,40 @@
+name: crash-tests
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  python:
+    name: ${{ matrix.suite }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [openai-agents, langgraph, google-adk]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13.5"
+      - name: Install pinned deps
+        run: pip install -r ${{ matrix.suite }}/requirements.txt
+      - name: Crash tests
+        working-directory: ${{ matrix.suite }}
+        run: python -m pytest tests -v -p no:cacheprovider
+  vercel-ai-sdk:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20.19.2"
+      - name: Install pinned deps
+        working-directory: vercel-ai-sdk
+        run: npm ci
+      - name: Crash tests
+        working-directory: vercel-ai-sdk
+        run: npm test
