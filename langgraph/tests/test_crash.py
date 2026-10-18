@@ -1,4 +1,4 @@
-"""Crash tests for LangGraph 1.2.15 interrupt() approvals. Offline, no LLM."""
+"""Crash tests for LangGraph 1.2.16 interrupt() approvals. Offline, no LLM."""
 import json, os, subprocess, sys
 from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.types import Command

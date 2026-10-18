@@ -1,4 +1,4 @@
-"""LangGraph 1.2.15: interrupt() approval persisted with SqliteSaver, so any process can resume.
+"""LangGraph 1.2.16: interrupt() approval persisted with SqliteSaver, so any process can resume.
 
 Graph: propose -> approval (interrupt only, nothing before it) -> execute (side effect) | END.
 execute uses an idempotency key derived from thread_id, so two workers resuming the same

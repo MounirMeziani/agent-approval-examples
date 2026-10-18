@@ -12,7 +12,7 @@ All examples use the same scenario: an agent wants to charge order 42 for `1999`
 - `approval.py`: a `@function_tool(needs_approval=True)` tool pauses the run. The state is saved with `RunState.to_string()` and restored in any process with `RunState.from_string()`, then approved or rejected and resumed with `Runner.run(agent, state)`. The idempotency key is `order_id:tool_name`. Model: `fake_model.ScriptedModel` (scripted, offline).
 - `examples/idempotent_approval.py`: compares a naive tool with an idempotent tool in two failure cases: (A) the same saved run is resumed twice, and (B) the run crashes *after* the tool ran (a simulated model 503) and the app retries from scratch.
 
-### `langgraph/`: LangGraph 1.2.15
+### `langgraph/`: LangGraph 1.2.16
 - `approval.py`: `propose -> approval (interrupt()) -> execute`. Nothing has side effects before the interrupt. Checkpoints are stored with `SqliteSaver`, so a fresh process can resume. `execute` uses the idempotency key `charge:<thread_id>`. There's no LLM; `propose` is deterministic.
 
 ### `google-adk/`: Google ADK 2.12.0
@@ -29,7 +29,7 @@ Each folder's `requirements.txt` pins only the packages its example and tests im
 | Folder | Framework | Other key pins |
 |---|---|---|
 | `openai-agents/` | `openai-agents==0.24.0` | `openai==3.31.0`, `pydantic==2.14.1`, `pytest==9.1.1` |
-| `langgraph/` | `langgraph==1.2.15` | `langgraph-checkpoint==4.3.0`, `langgraph-checkpoint-sqlite==3.1.2`, `pytest==9.1.1` |
+| `langgraph/` | `langgraph==1.2.16` | `langgraph-checkpoint==4.3.0`, `langgraph-checkpoint-sqlite==3.1.2`, `pytest==9.1.1` |
 | `google-adk/` | `google-adk==2.12.0` | `google-genai==2.31.0`, `aiosqlite==0.22.1`, `pytest==9.1.1` |
 | `vercel-ai-sdk/` | `ai@7.0.142` | `zod@4.6.7`, full tree in `package-lock.json` |
 
